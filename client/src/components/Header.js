@@ -1,11 +1,19 @@
-import React from 'react';
+import { Link } from "react-router-dom";
+
+// Components
+import Navigation from "./Navigation";
 
 const Header = () => {
   return (
     <header>
-      <h1 className='header--logo'>
-        <a href='/'>Courses</a>
+      <div className="wrap header--flex">
+      <h1 className="header--logo">
+        <Link to="/">
+          Courses
+        </Link>
       </h1>
+        <Navigation />
+      </div>
     </header>
   );
 };

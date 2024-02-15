@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+import AddCourse from "./AddCourse";
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -29,13 +31,16 @@ const CourseList = () => {
   return (
     <div className="wrap main--grid">
       {courses.map((course) => (
-        <a href="/" className="course--module course--link" key={course.id}>
-          {/* <Link to={`/courses/${course.id}`}> */}
-            <h2 className="course--label">Course</h2>
-            <h3 className="course--title">{course.title}</h3>
-          {/* </Link> */}
-        </a>
+        <Link
+          to={`/courses/${course.id}`}
+          className="course--module course--link"
+          key={course.id}
+        >
+          <h2 className="course--label">Course</h2>
+          <h3 className="course--title">{course.title}</h3>
+        </Link>
       ))}
+      <AddCourse />
     </div>
   );
 };
