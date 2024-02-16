@@ -7,7 +7,8 @@ import "./styles/global.css";
 
 // Components
 import Header from "./components/Header";
-import CourseList from "./components/CourseList";
+import Courses from "./components/Courses";
+import CreateCourse from "./components/CreateCourse";
 import UserSignIn from "./components/UserSignIn";
 import UserSignOut from "./components/UserSignOut";
 import UserSignUp from "./components/UserSignUp";
@@ -20,11 +21,12 @@ function App() {
       <Header />
       <main>
         <Routes>
-          <Route path="/" element={<CourseList />} />
+          <Route path="/" element={<Courses />} />
           <Route path="signup" element={<UserSignUp />} />
           <Route path="signin" element={<UserSignIn />} />
           <Route path="signout" element={<UserSignOut />} />
           <Route element={<PrivateRoute />}>
+            <Route path="createcourse" element={<CreateCourse />} />
             {/*  */}
           </Route>
           <Route path="*" element={<NotFound />} />

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 // Context
 import UserContext from "../context/UserContext";
@@ -7,19 +7,19 @@ import UserContext from "../context/UserContext";
 const PrivateRoute = () => {
   // Context
   const { authUser } = useContext(UserContext);
-  const location = useLocation();
 
-  // As an If statement
+  // If the user is authenticated, render the child components, otherwise show an error message
   if (authUser) {
     return <Outlet />;
   } else {
-    // Pass location state to SignIn component, so that it can 
-    // redirect to the page the user was trying to access
-    return <Navigate to="/signin" state={{from: location.pathname}} />;
+    // Error message for unauthorized users
+    return (
+      <div className="wrap">
+        <h2>Forbidden</h2>
+        <p>Oh oh! You can't access this page.</p>
+      </div>
+    );
   }
-
-  // As a ternary operator
-  // return authUser ? <Outlet /> : <Navigate to="/signin" />;
 };
 
 export default PrivateRoute;
