@@ -11,6 +11,7 @@ import Courses from "./components/Courses";
 import CourseDetail from "./components/CourseDetail";
 import CreateCourse from "./components/CreateCourse";
 // import UpdateCourse from "./components/UpdateCourse";
+// import DeleteCourse from "./components/DeleteCourse";
 import UserSignIn from "./components/UserSignIn";
 import UserSignOut from "./components/UserSignOut";
 import UserSignUp from "./components/UserSignUp";
@@ -31,6 +32,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="createcourse" element={<CreateCourse />} />
             {/* <Route path="courses/:id/update" element={<UpdateCourse />} /> */}
+            {/* <Route path="courses/:id/delete" element={<DeleteCourse />} /> */}
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

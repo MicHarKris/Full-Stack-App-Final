@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+// Context
+import UserContext from "../context/UserContext";
+
 const CourseDetail = () => {
+  // Context
+  const { authUser } = useContext(UserContext);
+
   // Get the course ID from the URL
   const { id } = useParams();
+  
   const [course, setCourse] = useState(null);
 
   useEffect(() => {
@@ -42,10 +49,12 @@ const CourseDetail = () => {
     const paragraphs = course.materialsNeeded.split(/\n/);
 
     // Map each paragraph to a <p> element
-    return paragraphs.map((paragraph, index) => <li key={index}>{paragraph}</li>);
+    return paragraphs.map((paragraph, index) => (
+      <li key={index}>{paragraph}</li>
+    ));
   };
 
-  // If course is not loaded, display loading message, otherwise display course details   
+  // If course is not loaded, display loading message, otherwise display course details
   if (!course) {
     return <p>Loading...</p>;
   }
@@ -55,12 +64,19 @@ const CourseDetail = () => {
       {/* Actions bar above the course details */}
       <div className="actions--bar">
         <div className="wrap">
-          <Link className="button" to={`/courses/${id}/update`}>
-            Update Course
-          </Link>
-          <Link className="button" to={`/courses/${id}/delete`}>
-            Delete Course
-          </Link>
+
+          {/* Hidden Update and Delete buttons, revealed when authUser.id matches course.userId */}
+          {authUser.id === course.User.id ? (
+            <>
+              <Link className="button" to={`/courses/${id}/update`}>
+                Update Course
+              </Link>
+              <Link className="button" to={`/courses/${id}/delete`}>
+                Delete Course
+              </Link>
+            </>
+          ) : null}
+
           <Link className="button button-secondary" to="/">
             Return to List
           </Link>
@@ -78,10 +94,12 @@ const CourseDetail = () => {
               <p>
                 By {course.User.firstName} {course.User.lastName}
               </p>
+
               {/* Render the course description, paragraph by paragraph */}
               {renderDescription()}
             </div>
             <div>
+
               {/* Conditional rendering for Estimated Time */}
               {course.estimatedTime ? (
                 <>
@@ -94,9 +112,8 @@ const CourseDetail = () => {
               {course.materialsNeeded ? (
                 <>
                   <h3 className="course--detail--title">Materials Needed</h3>
-                  <ul className="course--detail--list">
-                  {renderMaterials()}
-                  </ul>
+                  {/* Render the Materials, item by item */}
+                  <ul className="course--detail--list">{renderMaterials()}</ul>
                 </>
               ) : null}
             </div>

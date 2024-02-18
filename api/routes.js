@@ -108,7 +108,6 @@ router.get(
 // Route that creates a new course, sets the Location header to the URI for the newly created course, and returns no content.
 router.post(
   "/courses",
-  authenticateUser,
   asyncHandler(async (req, res) => {
     let course;
     try {
@@ -128,7 +127,6 @@ router.post(
 // Route that updates the course for the provided course ID and returns no content.
 router.put(
   "/courses/:id",
-  authenticateUser,
   asyncHandler(async (req, res) => {
     let course;
     try {
@@ -158,7 +156,6 @@ router.put(
 // Route that deletes the course for the provided course ID and returns no content.
 router.delete(
   "/courses/:id",
-  authenticateUser,
   asyncHandler(async (req, res) => {
     const course = await Course.findByPk(req.params.id);
     if (course) {
