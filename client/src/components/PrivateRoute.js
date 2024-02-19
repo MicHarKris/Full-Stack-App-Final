@@ -1,5 +1,9 @@
+// PrivateRoute.js
 import { useContext } from "react";
 import { Outlet } from "react-router-dom";
+
+// Components
+import Unauthorized from "./Unauthorized";
 
 // Context
 import UserContext from "../context/UserContext";
@@ -14,10 +18,7 @@ const PrivateRoute = () => {
   } else {
     // Error message for unauthorized users
     return (
-      <div className="wrap">
-        <h2>Forbidden</h2>
-        <p>Oh oh! You can't access this page.</p>
-      </div>
+      <Unauthorized />
     );
   }
 };

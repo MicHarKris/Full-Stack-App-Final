@@ -1,3 +1,4 @@
+// UserSignIn.js
 import { useContext, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
@@ -35,7 +36,6 @@ const UserSignIn = () => {
     // Try to sign in user
     try {
       const user = await actions.signIn(credentials);
-      console.log(user);
       if (user !== null) {
         navigate(from);
       } else {

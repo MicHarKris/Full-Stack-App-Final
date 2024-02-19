@@ -1,3 +1,4 @@
+// CreateCourse.js 
 import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +45,7 @@ const CreateCourse = () => {
       const response = await api("/courses", "POST", course);
       if (response.status === 201) {
         // If created, navigate to home
-        console.log(`Course ${course.courseTitle} is successfully created!`);
+        console.log(`Course ${course.title} is successfully created!`);
         navigate("/");
       } else if (response.status === 400) {
         // If bad request, set errors

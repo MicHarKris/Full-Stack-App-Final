@@ -126,14 +126,14 @@ router.post(
 
 // Route that updates the course for the provided course ID and returns no content.
 router.put(
-  "/courses/:id",
+  "/courses/:id-:userId",
   asyncHandler(async (req, res) => {
     let course;
     try {
       course = await Course.findByPk(req.params.id);
       if (course) {
         const courseOwner = course.userId;
-        if (courseOwner == req.currentUser.id) {
+        if (courseOwner == req.params.userId) {
           await course.update(req.body);
           res.status(204).location(`/courses/${course.id}`).end();
         } else {
@@ -155,12 +155,21 @@ router.put(
 
 // Route that deletes the course for the provided course ID and returns no content.
 router.delete(
-  "/courses/:id",
+  "/courses/:id-:userId",
   asyncHandler(async (req, res) => {
+    let course;
     try {
-      const course = await Course.findByPk(req.params.id);
-      // Route is not available on the client-side, if the user is not authenticated or if the user is not the owner of the course
+      course = await Course.findByPk(req.params.id);
+      // Route is not available on the client-side; if the user is not authenticated or if the user is not the owner of the course, 
+      // but still we need to check it here as well for the sake of security. 
       if (course) {
+        const courseOwner = course.userId;
+        if (courseOwner == req.params.userId) {
+          await course.destroy();
+          res.status(204).end();
+        } else {
+          res.status(403).end();
+        }
         await course.destroy();
         res.status(204).end();
       } else {

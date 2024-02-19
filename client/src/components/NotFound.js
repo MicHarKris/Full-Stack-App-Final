@@ -1,3 +1,4 @@
+// NotFound.js
 const NotFound = () => (
   <div className="wrap">
     <h2>Not Found</h2>

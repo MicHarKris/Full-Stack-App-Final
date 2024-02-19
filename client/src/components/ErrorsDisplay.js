@@ -1,3 +1,4 @@
+// ErrorsDisplay.js
 const ErrorsDisplay = ({ errors }) => {
   let errorsDisplay = null;
 

@@ -1,3 +1,4 @@
+// DeleteCourse.js
 import React from "react";
 import { useNavigate } from "react-router-dom"; 
 
@@ -9,13 +10,12 @@ const DeleteCourse = ({id}) => {
   const navigate = useNavigate(); // Use the navigate function from the router
 
   const handleDelete = async () => {
-    
     try {
       // Make a DELETE request using the api helper
       const response = await api(`/courses/${id}`, "DELETE");
       if (response.ok) {
         // If the request is successful, log a message to the console
-        console.log(`Course ${id} deleted successfully`);
+        console.log(`Course deleted successfully`);
         // Navigate back to the home page
         navigate("/");
       } else {

@@ -1,3 +1,4 @@
+// App.js
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -16,6 +17,7 @@ import UserSignOut from "./components/UserSignOut";
 import UserSignUp from "./components/UserSignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import NotFound from "./components/NotFound";
+import Unauthorized from "./components/Unauthorized";
 
 function App() {
   return (
@@ -33,6 +35,7 @@ function App() {
             <Route path="courses/:id/update" element={<UpdateCourse />} />
           </Route>
           <Route path="*" element={<NotFound />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
         </Routes>
       </main>
     </div>

@@ -1,3 +1,4 @@
+// CourseDetail.js
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -62,6 +63,10 @@ const CourseDetail = () => {
     return <p>Loading...</p>;
   }
 
+  // Create a unique identifier for the DeleteCourse component, with the course ID and the authenticated user's ID
+  // added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value
+  const identifier = `${id}-${authUser?.id}`;
+
   return (
     <>
       {/* Actions bar above the course details */}
@@ -69,8 +74,8 @@ const CourseDetail = () => {
         <div className="wrap">
 
           {/* Hidden Update and Delete buttons, revealed when authUser.id matches course.userId */}
-          {/* added the ?. 'optional chaining operator' to ensure */}
-          {authUser?.id === course.User.id && <DeleteCourse id={id} />}
+          {/* added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value*/}
+          {authUser?.id === course.User.id && <DeleteCourse id={identifier} />}
          
           {authUser?.id === course.User.id ? (
             <>
