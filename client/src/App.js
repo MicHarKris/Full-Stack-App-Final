@@ -10,8 +10,7 @@ import Header from "./components/Header";
 import Courses from "./components/Courses";
 import CourseDetail from "./components/CourseDetail";
 import CreateCourse from "./components/CreateCourse";
-// import UpdateCourse from "./components/UpdateCourse";
-// import DeleteCourse from "./components/DeleteCourse";
+import UpdateCourse from "./components/UpdateCourse";
 import UserSignIn from "./components/UserSignIn";
 import UserSignOut from "./components/UserSignOut";
 import UserSignUp from "./components/UserSignUp";
@@ -30,9 +29,8 @@ function App() {
           <Route path="signin" element={<UserSignIn />} />
           <Route path="signout" element={<UserSignOut />} />
           <Route element={<PrivateRoute />}>
-            <Route path="createcourse" element={<CreateCourse />} />
-            {/* <Route path="courses/:id/update" element={<UpdateCourse />} /> */}
-            {/* <Route path="courses/:id/delete" element={<DeleteCourse />} /> */}
+            <Route path="courses/create" element={<CreateCourse />} />
+            <Route path="courses/:id/update" element={<UpdateCourse />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

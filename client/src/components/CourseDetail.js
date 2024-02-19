@@ -2,6 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
+// Components
+import DeleteCourse from "./DeleteCourse";
+
 // Context
 import UserContext from "../context/UserContext";
 
@@ -66,13 +69,13 @@ const CourseDetail = () => {
         <div className="wrap">
 
           {/* Hidden Update and Delete buttons, revealed when authUser.id matches course.userId */}
-          {authUser.id === course.User.id ? (
+          {/* added the ?. 'optional chaining operator' to ensure */}
+          {authUser?.id === course.User.id && <DeleteCourse id={id} />}
+         
+          {authUser?.id === course.User.id ? (
             <>
               <Link className="button" to={`/courses/${id}/update`}>
                 Update Course
-              </Link>
-              <Link className="button" to={`/courses/${id}/delete`}>
-                Delete Course
               </Link>
             </>
           ) : null}

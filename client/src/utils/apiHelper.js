@@ -1,28 +1,28 @@
+// apiHelper.js
 export const api = (
-    // Default Values
-    path, 
-    method = "GET", 
-    body = null, 
-    credentials = null
+  path,
+  method = "GET",
+  body = null,
+  credentials = null,
 ) => {
-const url = "http://localhost:5000/api" + path;
+  const url = "http://localhost:5000/api" + path;
 
-const options = {
-  method: method,
-  headers: {}
-}
+  const options = {
+    method: method,
+    headers: {},
+  };
 
-if (body) {
+  if (body) {
     options.body = JSON.stringify(body);
     options.headers["Content-Type"] = "application/json; charset=utf-8";
-}
+  }
 
-if (credentials) {
+  if (credentials) {
     const encodedCredentials = btoa(
-        `${credentials.email}:${credentials.password}`
+      `${credentials.email}:${credentials.password}`
     );
     options.headers.Authorization = `Basic ${encodedCredentials}`;
-}
+  }
 
-return fetch(url, options);
-}
+  return fetch(url, options);
+};

@@ -157,17 +157,18 @@ router.put(
 router.delete(
   "/courses/:id",
   asyncHandler(async (req, res) => {
-    const course = await Course.findByPk(req.params.id);
-    if (course) {
-      const courseOwner = course.userId;
-      if (courseOwner == req.currentUser.id) {
+    try {
+      const course = await Course.findByPk(req.params.id);
+      // Route is not available on the client-side, if the user is not authenticated or if the user is not the owner of the course
+      if (course) {
         await course.destroy();
         res.status(204).end();
       } else {
-        res.status(403).end();
+        res.sendStatus(404);
       }
-    } else {
-      res.sendStatus(404);
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   })
 );

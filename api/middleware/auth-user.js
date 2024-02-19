@@ -8,7 +8,7 @@ const { User } = require('../models');
 // Middleware to authenticate the request using Basic Authentication.
 exports.authenticateUser = async (req, res, next) => {
   let message; // store the message to display
-  const credentials = auth(req);
+  const credentials = auth(req); // parse the user's credentials from the Authorization header
 
   if (credentials) {
     const user = await User.findOne({ where: { emailAddress: credentials.name } });
