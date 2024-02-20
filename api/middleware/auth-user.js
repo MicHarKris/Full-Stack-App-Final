@@ -10,6 +10,7 @@ exports.authenticateUser = async (req, res, next) => {
   let message; // store the message to display
   const credentials = auth(req); // parse the user's credentials from the Authorization header
 
+  // If the user's credentials are available...
   if (credentials) {
     const user = await User.findOne({ where: { emailAddress: credentials.name } });
     if (user) {
@@ -27,6 +28,7 @@ exports.authenticateUser = async (req, res, next) => {
     message = 'Auth header not found';
   }
 
+  // If user authentication failed...
   if (message) {
     console.warn(message);
     res.status(401).json({ message: 'Access Denied' });

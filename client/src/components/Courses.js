@@ -1,32 +1,53 @@
 // Courses.js
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Courses = () => {
+  // Hooks
+  const navigate = useNavigate();
+
+  // State
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    // Function to fetch course data
+    // Fetch courses from the API
     const fetchCourses = async () => {
       try {
         // Fetch the response from the API
         const response = await fetch("http://localhost:5000/api/courses");
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        // If the response is successful, set the course state
+        if (response.ok) {
+          const coursesData = await response.json();
+          setCourses(coursesData);
+          // Error handling for other status codes
+        } else if (!response.ok) {
+          // Handle case where server route is not found
+          if (response.status === 404) {
+            console.log("Route not found");
+            navigate("/notfound");
+            return; // Exit the function to prevent further processing
+            // Handle case where server error occurs
+          } else if (response.status === 500) {
+            console.log("Internal Server Error");
+            navigate("/error");
+            return; // Exit the function to prevent further processing
+            // Handle other errors
+          } else {
+            throw new Error();
+          }
         }
-
-        const coursesData = await response.json();
-        setCourses(coursesData);
+        // Error handling for network errors
       } catch (error) {
-        console.error("Error fetching courses:", error);
+        console.error(error);
+        navigate("/error");
       }
     };
 
     // Call the fetchCourses function
     fetchCourses();
-  }, []); // Empty dependency array ensures that the effect runs once when the component mounts
+  }, [navigate]);
 
+  // Render the courses
   return (
     <div className="wrap main--grid">
       {courses.map((course) => (
@@ -40,7 +61,10 @@ const Courses = () => {
         </Link>
       ))}
 
-      <Link to={`courses/create`} className="course--module course--add--module">
+      <Link
+        to={`courses/create`}
+        className="course--module course--add--module"
+      >
         <span className="course--add--title">
           <svg
             version="1.1"

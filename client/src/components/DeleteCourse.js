@@ -1,34 +1,45 @@
 // DeleteCourse.js
 import React from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 // Utils
 import { api } from "../utils/apiHelper";
 
-const DeleteCourse = ({id}) => {
-  
-  const navigate = useNavigate(); // Use the navigate function from the router
+const DeleteCourse = ({ id }) => {
+  // Hooks
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
-      // Make a DELETE request using the api helper
       const response = await api(`/courses/${id}`, "DELETE");
+      // If successful, navigate to home
       if (response.ok) {
-        // If the request is successful, log a message to the console
         console.log(`Course deleted successfully`);
-        // Navigate back to the home page
         navigate("/");
-      } else {
-        // If there's an error, log the error message to the console
-        const errorMessage = `Error deleting course: ${response.statusText}`;
-        console.log(errorMessage);
+      } else if (!response.ok) {
+        // Handle case where server route is not found
+        if (response.status === 404) {
+          console.log("Route not found");
+          navigate("/notfound");
+          return; // Exit the function to prevent further processing
+          // Handle case where server error occurs
+        } else if (response.status === 500) {
+          console.log("Internal Server Error");
+          navigate("/error");
+          return; // Exit the function to prevent further processing
+          // Handle other errors
+        } else {
+          throw new Error();
+        }
       }
+      // Error handling for network errors
     } catch (error) {
-      // Handle network or other errors
-      console.log(`Error deleting course: ${error.message}`);
+      console.log(error);
+      navigate("/error");
     }
   };
-  
+
+  // Render the delete button
   return (
     <button className="button" onClick={handleDelete}>
       Delete Course

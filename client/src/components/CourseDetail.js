@@ -1,6 +1,8 @@
 // CourseDetail.js
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Link } from "react-router-dom";
 
 // Components
@@ -13,70 +15,90 @@ const CourseDetail = () => {
   // Context
   const { authUser } = useContext(UserContext);
 
-  // Get the course ID from the URL
+  // Hooks
+  const navigate = useNavigate();
   const { id } = useParams();
-  
+
+  // State
   const [course, setCourse] = useState(null);
 
   useEffect(() => {
-    // Function to fetch course data
+    // Fetch course data from the API
     const fetchCourse = async () => {
       try {
-        // Fetch the response from the API
         const response = await fetch(`http://localhost:5000/api/courses/${id}`);
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        // If the response is successful, set the course state
+        if (response.ok) {
+          const courseData = await response.json();
+          setCourse(courseData);
+          // Error handling for other status codes
+        } else if (!response.ok) {
+          // Handle case where server route is not found
+          if (response.status === 404) {
+            console.log("Route not found");
+            navigate("/notfound");
+            return; // Exit the function to prevent further processing
+            // Handle case where server error occurs
+          } else if (response.status === 500) {
+            console.log("Internal Server Error");
+            navigate("/error");
+            return; // Exit the function to prevent further processing
+            // Handle other errors
+          } else {
+            throw new Error();
+          }
         }
-
-        const courseData = await response.json();
-        setCourse(courseData);
+        // Error handling for network errors
       } catch (error) {
-        console.error("Error fetching course details:", error);
+        console.error(error);
+        navigate("/error");
       }
     };
 
-    // Call the fetchCourse function
     fetchCourse();
-  }, [id]); // Dependency array ensures that the effect runs when the component mounts and when the ID changes
+  }, [id, navigate]);
 
-  const renderDescription = () => {
-    // Split description into paragraphs using regex
-    const paragraphs = course.description.split(/\n\s*\n/);
+  /* -- This code was replaced by the ReactMarkdown component --
+      But it is kept here for reference purposes --
+  // const renderDescription = () => {
+  //   // Split description into paragraphs using regex
+  //   const paragraphs = course.description.split(/\n\s*\n/);
 
-    // Map each paragraph to a <p> element
-    return paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>);
-  };
+  //   // Map each paragraph to a <p> element
+  //   return paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>);
+  // };
 
-  const renderMaterials = () => {
-    // Split materials into paragraphs using regex
-    const paragraphs = course.materialsNeeded.split(/\n/);
+  // const renderMaterials = () => {
+  //   // Split materials into paragraphs using regex
+  //   const paragraphs = course.materialsNeeded.split(/\n/);
 
-    // Map each paragraph to a <p> element
-    return paragraphs.map((paragraph, index) => (
-      <li key={index}>{paragraph}</li>
-    ));
-  };
+  //   // Map each paragraph to a <p> element
+  //   return paragraphs.map((paragraph, index) => (
+  //     <li key={index}>{paragraph}</li>
+  //   ));
+  // };
+*/
 
   // If course is not loaded, display loading message, otherwise display course details
   if (!course) {
     return <p>Loading...</p>;
   }
 
-  // Create a unique identifier for the DeleteCourse component, with the course ID and the authenticated user's ID
-  // added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value
+  /* -- Create a unique identifier for the DeleteCourse component, with the course ID and the authenticated user's ID
+      added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value
+*/
   const identifier = `${id}-${authUser?.id}`;
 
+  // Render the course details
   return (
     <>
       {/* Actions bar above the course details */}
       <div className="actions--bar">
         <div className="wrap">
-
           {/* Hidden Update and Delete buttons, revealed when authUser.id matches course.userId */}
           {/* added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value*/}
           {authUser?.id === course.User.id && <DeleteCourse id={identifier} />}
-         
+
           {authUser?.id === course.User.id ? (
             <>
               <Link className="button" to={`/courses/${id}/update`}>
@@ -103,11 +125,15 @@ const CourseDetail = () => {
                 By {course.User.firstName} {course.User.lastName}
               </p>
 
-              {/* Render the course description, paragraph by paragraph */}
-              {renderDescription()}
+              {/* Render the course description using ReactMarkdown */}
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {course.description}
+              </ReactMarkdown>
+
+              {/* Render the course description, paragraph by paragraph
+              {renderDescription()} */}
             </div>
             <div>
-
               {/* Conditional rendering for Estimated Time */}
               {course.estimatedTime ? (
                 <>
@@ -120,8 +146,14 @@ const CourseDetail = () => {
               {course.materialsNeeded ? (
                 <>
                   <h3 className="course--detail--title">Materials Needed</h3>
-                  {/* Render the Materials, item by item */}
-                  <ul className="course--detail--list">{renderMaterials()}</ul>
+
+                  {/* Render the Materials using ReactMarkdown */}
+                  <ReactMarkdown className="course--detail--list">
+                    {course.materialsNeeded}
+                  </ReactMarkdown>
+
+                  {/* Render the Materials, item by item
+                  <ul className="course--detail--list">{renderMaterials()}</ul> */}
                 </>
               ) : null}
             </div>

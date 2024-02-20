@@ -7,16 +7,19 @@ export const api = (
 ) => {
   const url = "http://localhost:5000/api" + path;
 
+  // Set options
   const options = {
     method: method,
     headers: {},
   };
 
+  // If body is provided, set options.body and Content-Type header
   if (body) {
     options.body = JSON.stringify(body);
     options.headers["Content-Type"] = "application/json; charset=utf-8";
   }
 
+  // If credentials are provided, set Authorization header
   if (credentials) {
     const encodedCredentials = btoa(
       `${credentials.email}:${credentials.password}`

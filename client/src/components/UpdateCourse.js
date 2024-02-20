@@ -15,12 +15,13 @@ const UpdateCourse = () => {
   // Context
   const { authUser } = useContext(UserContext);
 
+  // Hooks
   const navigate = useNavigate();
   const { id } = useParams();
 
   // State
   const [course, setCourse] = useState(null);
-  const [errors, setErrors] = useState([]);
+  const [errors] = useState([]);
 
   // Refs
   const courseTitle = useRef(null);
@@ -36,17 +37,30 @@ const UpdateCourse = () => {
         if (response.status === 200) {
           const courseData = await response.json();
           setCourse(courseData);
-          // Check if the authenticated user is the owner of the course
+          // If the authenticated user is not the owner of the course, redirect to forbidden
           if (authUser.id !== courseData.User.id) {
-            // Redirect to unauthorized page or display an error message
-            navigate("/unauthorized");
+            console.log("You are not authorized to update this course");
+            navigate("/forbidden");
+            return; // Exit the function to prevent further processing
+          } 
+          // Error handling for other status codes
+        } else if (!response.ok) {
+          // Handle case where server route is not found
+          if (response.status === 404) {
+            console.log("Route not found");
+            navigate("/not-found");
+            return; // Exit the function to prevent further processing
+            // Handle case where server error occurs
+          } else if (response.status === 500) {
+            console.log("Internal Server Error");
+            navigate("/error");
+            return; // Exit the function to prevent further processing
+            // Handle other errors
+          } else {
+            throw new Error();
           }
-        } else if (response.status === 404) {
-          // Handle case where course is not found
-          navigate("/not-found");
-        } else {
-          throw new Error();
         }
+        // Error handling for network errors
       } catch (error) {
         console.error(error);
         navigate("/error");
@@ -60,6 +74,7 @@ const UpdateCourse = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Course object to send to API
     const updatedCourse = {
       userId: authUser.id,
       title: courseTitle.current.value,
@@ -81,25 +96,37 @@ const UpdateCourse = () => {
       if (response.status === 204) {
         // If updated, navigate to course details page
         navigate(`/courses/${id}`);
-      } else if (response.status === 400) {
-        // If bad request, set errors
-        const data = await response.json();
-        setErrors(data.errors);
-      } else {
-        throw new Error();
+        // Error handling for other status codes
+      } else if (!response.ok) {
+        // Handle case where server route is not found
+        if (response.status === 404) {
+          console.log("Route not found");
+          navigate("/not-found");
+          return; // Exit the function to prevent further processing
+          // Handle case where server error occurs
+        } else if (response.status === 500) {
+          console.log("Internal Server Error");
+          navigate("/error");
+          return; // Exit the function to prevent further processing
+          // Handle other errors
+        } else {
+          throw new Error();
+        }
       }
+      // Error handling for network errors
     } catch (error) {
       console.error(error);
       navigate("/error");
     }
   };
 
+  // Cancel button event handler
   const handleCancel = (event) => {
     event.preventDefault();
-    // Redirect to course details page
     navigate(`/courses/${id}`);
   };
 
+  // Render the form
   return (
     <div className="wrap">
       <h2>Update Course</h2>

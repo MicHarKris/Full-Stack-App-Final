@@ -6,9 +6,9 @@ import { Navigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 
 const UserSignOut = () => {
+  // Context  
   const { actions } = useContext(UserContext);
   
-
   useEffect(() => {
     // Perform sign out logic
     actions.signOut();

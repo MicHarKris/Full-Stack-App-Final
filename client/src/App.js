@@ -17,8 +17,10 @@ import UserSignOut from "./components/UserSignOut";
 import UserSignUp from "./components/UserSignUp";
 import PrivateRoute from "./components/PrivateRoute";
 import NotFound from "./components/NotFound";
-import Unauthorized from "./components/Unauthorized";
+import Forbidden from "./components/Forbidden";
+import Error from "./components/UnhandledError";
 
+// App component
 function App() {
   return (
     <div className="App">
@@ -35,7 +37,8 @@ function App() {
             <Route path="courses/:id/update" element={<UpdateCourse />} />
           </Route>
           <Route path="*" element={<NotFound />} />
-          <Route path="unauthorized" element={<Unauthorized />} />
+          <Route path="error" element={<Error />} />
+          <Route path="forbidden" element={<Forbidden />} />
         </Routes>
       </main>
     </div>

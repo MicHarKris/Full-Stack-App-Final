@@ -9,7 +9,10 @@ import ErrorsDisplay from "./ErrorsDisplay";
 import UserContext from "../context/UserContext";
 
 const UserSignIn = () => {
+  // Context
   const { actions } = useContext(UserContext);
+
+  // Hooks
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,12 +25,13 @@ const UserSignIn = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Set from to location state, or default to authenticated
+    // Set from to location state, or default to the root
     let from = "/";
     if (location.state) {
       from = location.state.from;
     }
 
+    // Credentials object to send to API
     const credentials = {
       email: email.current.value,
       password: password.current.value,
@@ -36,23 +40,26 @@ const UserSignIn = () => {
     // Try to sign in user
     try {
       const user = await actions.signIn(credentials);
+      // If user is not null, navigate to from
       if (user !== null) {
         navigate(from);
       } else {
         setErrors(["Sign-in was unsuccessful"]);
       }
-    } catch (error) {
       // Catch any errors and log to console
+    } catch (error) {
       console.log(error);
       navigate("/error");
     }
   };
 
+  // Cancel button event handler
   const handleCancel = (event) => {
     event.preventDefault();
     navigate("/");
   };
 
+  // Render the form
   return (
     <div className="form--centered">
       <h2>Sign In</h2>
