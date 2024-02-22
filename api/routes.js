@@ -126,16 +126,19 @@ router.post(
 
 // Route that updates the course for the provided course ID and returns no content.
 router.put(
-  "/courses/:id-:userId",
+  "/courses/:id",
+  authenticateUser,
   asyncHandler(async (req, res) => {
     let course;
     try {
       course = await Course.findByPk(req.params.id);
       if (course) {
         const courseOwner = course.userId;
-        if (courseOwner == req.params.userId) {
+        // Check if the current user is the owner of the course
+        if (courseOwner == req.currentUser.id) {
           await course.update(req.body);
           res.status(204).location(`/courses/${course.id}`).end();
+          console.log("Course updated");
         } else {
           res.status(403).end();
         }
@@ -155,29 +158,21 @@ router.put(
 
 // Route that deletes the course for the provided course ID and returns no content.
 router.delete(
-  "/courses/:id-:userId",
+  "/courses/:id",
+  authenticateUser,
   asyncHandler(async (req, res) => {
-    let course;
-    try {
-      course = await Course.findByPk(req.params.id);
-      // Route is not available on the client-side; if the user is not authenticated or if the user is not the owner of the course, 
-      // but still we need to check it here as well for the sake of security. 
-      if (course) {
-        const courseOwner = course.userId;
-        if (courseOwner == req.params.userId) {
-          await course.destroy();
-          res.status(204).end();
-        } else {
-          res.status(403).end();
-        }
+    const course = await Course.findByPk(req.params.id);
+    if (course) {
+      const courseOwner = course.userId;
+      // Check if the current user is the owner of the course
+      if (courseOwner == req.currentUser.id) {
         await course.destroy();
         res.status(204).end();
       } else {
-        res.sendStatus(404);
+        res.status(403).end();
       }
-    } catch (error) {
-      console.error("Error deleting course:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      res.sendStatus(404);
     }
   })
 );

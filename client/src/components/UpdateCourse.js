@@ -21,7 +21,7 @@ const UpdateCourse = () => {
 
   // State
   const [course, setCourse] = useState(null);
-  const [errors] = useState([]);
+  const [errors, setErrors] = useState([]);
 
   // Refs
   const courseTitle = useRef(null);
@@ -37,12 +37,12 @@ const UpdateCourse = () => {
         if (response.status === 200) {
           const courseData = await response.json();
           setCourse(courseData);
-          // If the authenticated user is not the owner of the course, redirect to forbidden
+          // Check if the user is the owner of the course, otherwise redirect to forbidden
           if (authUser.id !== courseData.User.id) {
             console.log("You are not authorized to update this course");
             navigate("/forbidden");
             return; // Exit the function to prevent further processing
-          } 
+          }
           // Error handling for other status codes
         } else if (!response.ok) {
           // Handle case where server route is not found
@@ -83,27 +83,38 @@ const UpdateCourse = () => {
       materialsNeeded: materialsNeeded.current.value,
     };
 
-    // Create a unique identifier for the DeleteCourse component, with the course ID and the authenticated user's ID
-    // added the ?. 'optional chaining operator' to ensure that it does not render without an assigned .id value
-    const identifier = `${id}-${authUser?.id}`;
+    // Credentials object to send to API
+    const credentials = {
+      email: authUser.emailAddress,
+      password: authUser.password,
+    };
 
     try {
       const response = await api(
-        `/courses/${identifier}`,
+        `/courses/${id}`,
         "PUT",
-        updatedCourse
+        updatedCourse,
+        credentials
       );
       if (response.status === 204) {
         // If updated, navigate to course details page
         navigate(`/courses/${id}`);
         // Error handling for other status codes
       } else if (!response.ok) {
-        // Handle case where server route is not found
-        if (response.status === 404) {
+        // if bad request, set errors
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data.errors);
+          // Handle case where server route is not found
+        } else if (response.status === 404) {
           console.log("Route not found");
           navigate("/not-found");
           return; // Exit the function to prevent further processing
           // Handle case where server error occurs
+        } else if (response.status === 403) {
+          console.log("You are not authorized to update this course");
+          navigate("/forbidden");
+          return; // Exit the function to prevent further processing
         } else if (response.status === 500) {
           console.log("Internal Server Error");
           navigate("/error");

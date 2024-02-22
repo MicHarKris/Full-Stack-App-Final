@@ -24,7 +24,7 @@ const UserSignUp = () => {
   const lastName = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
-  const [errors] = useState([]);
+  const [errors, setErrors] = useState([]);
 
   // event handlers
   const handleSubmit = async (event) => {
@@ -64,8 +64,12 @@ const UserSignUp = () => {
         navigate(from);
           // Error handling for other status codes
       } else if (!response.ok) {
+        // If bad request, set errors
+        if (response.status === 400) {
+          const data = await response.json();
+          setErrors(data.errors);
         // Handle case where server route is not found
-        if (response.status === 404) {
+        } else if (response.status === 404) {
           console.log("Route not found");
           navigate("/not-found");
           return; // Exit the function to prevent further processing

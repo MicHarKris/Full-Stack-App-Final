@@ -1,5 +1,5 @@
 // UserSignIn.js
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // Components
@@ -10,7 +10,7 @@ import UserContext from "../context/UserContext";
 
 const UserSignIn = () => {
   // Context
-  const { actions } = useContext(UserContext);
+  const { actions, authUser } = useContext(UserContext);
 
   // Hooks
   const navigate = useNavigate();
@@ -20,6 +20,13 @@ const UserSignIn = () => {
   const email = useRef(null);
   const password = useRef(null);
   const [errors, setErrors] = useState([]);
+
+  // If user is already signed in, navigate to home
+  useEffect(() => {
+    if (authUser) {
+      navigate("/");
+    }
+  }, [authUser, navigate]);
 
   // Event Handlers
   const handleSubmit = async (event) => {
@@ -63,32 +70,22 @@ const UserSignIn = () => {
   return (
     <div className="form--centered">
       <h2>Sign In</h2>
-        <ErrorsDisplay errors={errors} />
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email Address</label>
-          <input 
-            id="email" 
-            name="email" 
-            type="text" 
-            ref={email} 
-          />
-          <label htmlFor="email">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            ref={password}
-          />
-            <button className="button" type="submit">
-              Sign in
-            </button>
-            <button className="button button-secondary" onClick={handleCancel}>
-              Cancel
-            </button>
-        </form>
+      <ErrorsDisplay errors={errors} />
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email Address</label>
+        <input id="email" name="email" type="text" ref={email} />
+        <label htmlFor="email">Password</label>
+        <input id="password" name="password" type="password" ref={password} />
+        <button className="button" type="submit">
+          Sign in
+        </button>
+        <button className="button button-secondary" onClick={handleCancel}>
+          Cancel
+        </button>
+      </form>
       <p>
-        Don't have a user account? Click here to <Link to="/signup">sign
-        up</Link>!
+        Don't have a user account? Click here to{" "}
+        <Link to="/signup">sign up</Link>!
       </p>
     </div>
   );
