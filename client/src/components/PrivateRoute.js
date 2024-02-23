@@ -11,7 +11,7 @@ const PrivateRoute = () => {
   const { authUser } = useContext(UserContext);
 
   // If the user is authenticated, render the child components, otherwise navigate to /signin
-  return authUser ? <Outlet /> : <Navigate to="/signin" />;
+  return authUser ? <Outlet /> : <Navigate to="/signin" state={{ from: window.location.pathname }}/>;
 };
 
 export default PrivateRoute;
