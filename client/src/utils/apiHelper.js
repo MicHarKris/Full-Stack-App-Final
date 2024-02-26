@@ -5,7 +5,7 @@ export const api = (
   body = null,
   credentials = null,
 ) => {
-  const url = "http://localhost:5000/api" + path;
+  const url = "https://full-stack-app.up.railway.app/api" + path;
 
   // Set options
   const options = {

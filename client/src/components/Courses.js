@@ -14,7 +14,7 @@ const Courses = () => {
     const fetchCourses = async () => {
       try {
         // Fetch the response from the API
-        const response = await fetch("http://localhost:5000/api/courses");
+        const response = await fetch("https://full-stack-app.up.railway.app/api/courses");
         // If the response is successful, set the course state
         if (response.ok) {
           const coursesData = await response.json();
